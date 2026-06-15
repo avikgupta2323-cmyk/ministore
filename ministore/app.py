@@ -230,7 +230,7 @@ for i in range(0, len(filtered_products), 3):
 # Floating Support Button
 # --------------------------------------------------
 st.markdown("""
-<a href="/Support_Chatbot" target="_self" class="support-button">
+<a href="/Support" target="_self" class="support-button">
 💬 Support
 </a>
 """, unsafe_allow_html=True)

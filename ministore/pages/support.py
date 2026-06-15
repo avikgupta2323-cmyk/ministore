@@ -13,9 +13,13 @@ st.set_page_config(
 # --------------------------------------------------
 # OpenAI Client
 # --------------------------------------------------
-client = OpenAI(
-    api_key=st.secrets["OPENAI_API_KEY"]
-)
+openai_api_key = st.secrets.get("OPENAI_API_KEY", "")
+
+if not openai_api_key:
+    st.error("OpenAI API key is missing. Add OPENAI_API_KEY to .streamlit/secrets.toml.")
+    st.stop()
+
+client = OpenAI(api_key=openai_api_key)
 
 # --------------------------------------------------
 # Product Catalog
@@ -198,14 +202,22 @@ if user_input:
     with st.chat_message("assistant"):
 
         with st.spinner("Typing..."):
-
-            response = client.chat.completions.create(
-                model="gpt-4.1-mini",
-                messages=st.session_state.messages,
-                temperature=0.5
+            assistant_reply = (
+                "Sorry, I couldn't reach the support assistant right now. "
+                "Please try again in a few moments."
             )
 
-            assistant_reply = response.choices[0].message.content
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4.1-mini",
+                    messages=st.session_state.messages,
+                    temperature=0.5
+                )
+
+                assistant_reply = response.choices[0].message.content
+            except Exception as error:
+                st.error("Unable to retrieve a response from OpenAI. Please try again later.")
+                st.write(f"Error: {error}")
 
             st.markdown(assistant_reply)
 
