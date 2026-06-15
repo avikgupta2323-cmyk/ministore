@@ -1,0 +1,1 @@
+"""MiniStore package initializer."""
